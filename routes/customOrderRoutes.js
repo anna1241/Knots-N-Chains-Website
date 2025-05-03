@@ -1,23 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createCustomOrder,
-  getMyCustomOrders,
-  getCustomOrders,
-  updateCustomOrderStatus
-} = require('../controllers/customOrderController');
-const { auth, admin } = require('../middleware/auth');
+const CustomOrder = require('./models/customOrder');
 
-router.route('/')
-  .post(createCustomOrder);
-
-router.route('/myorders')
-  .get(auth, getMyCustomOrders);
-
-router.route('/admin')
-  .get(auth, admin, getCustomOrders);
-
-router.route('/:id/status')
-  .put(auth, admin, updateCustomOrderStatus);
+// POST /api/custom-orders
+router.post('/', async (req, res) => {
+  try {
+    const customOrder = new CustomOrder(req.body);
+    const savedOrder = await customOrder.save();
+    res.status(201).json({ success: true, orderId: savedOrder._id });
+  } catch (error) {
+    console.error('Error creating custom order:', error);
+    res.status(500).json({ success: false, message: 'Failed to create custom order' });
+  }
+});
 
 module.exports = router;
