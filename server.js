@@ -9,7 +9,7 @@ const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
-const cartRoutes = require('./routes/cartRoutes');  // ✅ Cart routes
+const cartRoutes = require('./routes/cartRoutes'); 
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
-app.use('/api/cart', cartRoutes);  // ✅ Mount cart route
+app.use('/api/cart', cartRoutes); 
 
 // PayPal config
 app.get('/api/config/paypal', (req, res) => 
