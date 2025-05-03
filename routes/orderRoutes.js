@@ -2,15 +2,27 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 
-router.post('/', async (req, res) => {
+// Middleware to ensure user is logged in (replace with your auth logic)
+const authMiddleware = require('../middleware/auth');
+
+// Get all orders for logged-in user
+router.get('/my-orders', authMiddleware, async (req, res) => {
   try {
-    const orderData = req.body;
-    const newOrder = new Order(orderData);
-    const savedOrder = await newOrder.save();
-    res.status(201).json({ success: true, orderId: savedOrder._id });
-  } catch (error) {
-    console.error('Error saving order:', error);
-    res.status(500).json({ success: false, message: 'Order placement failed.' });
+    const orders = await Order.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Track specific order by ID
+router.get('/:orderId', authMiddleware, async (req, res) => {
+  try {
+    const order = await Order.findOne({ _id: req.params.orderId, user: req.user.id });
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
